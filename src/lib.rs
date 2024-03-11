@@ -9,12 +9,17 @@ use near_sdk::near_bindgen;
 pub struct Contract {
     greeting: String,
     counter: usize,
+    encryption_pub_key: String,
 }
 
 // Define the default, which automatically initializes the contract
 impl Default for Contract {
     fn default() -> Self {
-        Self { greeting: "Hello".to_string(), counter: 0 }
+        Self {
+            greeting: "Hello".to_string(),
+            counter: 0,
+            encryption_pub_key: "".to_string(),
+        }
     }
 }
 
@@ -30,6 +35,14 @@ impl Contract {
     pub fn set_greeting(&mut self, greeting: String) {
         log_str(&format!("Saving greeting: {greeting}"));
         self.greeting = greeting;
+    }
+
+    pub fn get_encryption_pub_key(&self) -> String {
+        self.encryption_pub_key.clone()
+    }
+
+    pub fn set_encryption_pub_key(&mut self, key: String) {
+        self.encryption_pub_key = key;
     }
 
     pub fn get_counter(&self) -> usize {
@@ -59,19 +72,30 @@ mod tests {
     fn get_default_greeting() {
         let contract = Contract::default();
         // this test did not call set_greeting so should return the default "Hello" greeting
-        assert_eq!(
-            contract.get_greeting(),
-            "Hello".to_string()
-        );
+        assert_eq!(contract.get_greeting(), "Hello".to_string());
     }
 
     #[test]
     fn set_then_get_greeting() {
         let mut contract = Contract::default();
         contract.set_greeting("howdy".to_string());
+        assert_eq!(contract.get_greeting(), "howdy".to_string());
+    }
+
+    #[test]
+    fn get_default_encryption_pub_key() {
+        let contract = Contract::default();
+        // this test did not call set_greeting so should return the default "Hello" greeting
+        assert_eq!(contract.get_encryption_pub_key(), "".to_string());
+    }
+
+    #[test]
+    fn set_then_get_encryption_pub_key() {
+        let mut contract = Contract::default();
+        contract.set_encryption_pub_key("1239041zasdwaz".to_string());
         assert_eq!(
-            contract.get_greeting(),
-            "howdy".to_string()
+            contract.get_encryption_pub_key(),
+            "1239041zasdwaz".to_string()
         );
     }
 }
