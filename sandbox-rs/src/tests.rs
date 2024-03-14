@@ -23,50 +23,47 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .into_result()?;
 
     // begin tests
-    test_default_message(&alice, &contract).await?;
-    test_changes_message(&alice, &contract).await?;
+    test_default_ipfs_cid(&alice, &contract).await?;
+    test_changes_ipfs_cid(&alice, &contract).await?;
     test_default_encryption_pub_key(&alice, &contract).await?;
     test_changes_encryption_pub_key(&alice, &contract).await?;
-    test_increment(&alice, &contract).await?;
-    test_multiply(&alice, &contract).await?;
     Ok(())
 }
 
-async fn test_default_message(
+async fn test_default_ipfs_cid(
     user: &Account,
     contract: &Contract,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let greeting: String = user
-        .call(contract.id(), "get_greeting")
+        .call(contract.id(), "get_ipfs_cid")
         .args_json(json!({}))
         .transact()
         .await?
         .json()?;
 
-    assert_eq!(greeting, "Hello".to_string());
-    println!("      Passed ✅ gets default greeting");
+    assert_eq!(greeting, "".to_string());
+    println!("      Passed ✅ gets default ipfs_cid");
     Ok(())
 }
 
-async fn test_changes_message(
+async fn test_changes_ipfs_cid(
     user: &Account,
     contract: &Contract,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    user.call(contract.id(), "set_greeting")
-        .args_json(json!({"greeting": "Howdy"}))
+    user.call(contract.id(), "set_ipfs_cid")
+        .args_json(json!({"ipfs_cid": "Howdy"}))
         .transact()
         .await?
         .into_result()?;
 
-    let greeting: String = user
-        .call(contract.id(), "get_greeting")
+    let ipfs_cid: String = user
+        .view(contract.id(), "get_ipfs_cid")
         .args_json(json!({}))
-        .transact()
         .await?
         .json()?;
 
-    assert_eq!(greeting, "Howdy".to_string());
-    println!("      Passed ✅ changes greeting");
+    assert_eq!(ipfs_cid, "Howdy".to_string());
+    println!("      Passed ✅ changes ipfs_cid");
     Ok(())
 }
 
@@ -104,51 +101,5 @@ async fn test_changes_encryption_pub_key(
 
     assert_eq!(greeting, "1224142141asdas".to_string());
     println!("      Passed ✅ changes encryption public key");
-    Ok(())
-}
-
-async fn test_increment(
-    user: &Account,
-    contract: &Contract,
-) -> Result<(), Box<dyn std::error::Error>> {
-    for _ in 0..3 {
-        user.call(contract.id(), "increment_counter")
-            .args_json(json!({}))
-            .transact()
-            .await?
-            .into_result()?;
-    }
-
-    let counter: usize = user
-        .call(contract.id(), "get_counter")
-        .args_json(json!({}))
-        .transact()
-        .await?
-        .json()?;
-
-    assert_eq!(counter, 3);
-    println!("      Passed ✅ increments");
-    Ok(())
-}
-
-async fn test_multiply(
-    user: &Account,
-    contract: &Contract,
-) -> Result<(), Box<dyn std::error::Error>> {
-    user.call(contract.id(), "multiply_counter")
-        .args_json(json!({"val": 3}))
-        .transact()
-        .await?
-        .into_result()?;
-
-    let counter: usize = user
-        .call(contract.id(), "get_counter")
-        .args_json(json!({}))
-        .transact()
-        .await?
-        .json()?;
-
-    assert_eq!(counter, 9);
-    println!("      Passed ✅ multiples");
     Ok(())
 }

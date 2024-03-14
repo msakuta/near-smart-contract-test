@@ -9,8 +9,7 @@ use near_sdk::near_bindgen;
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Contract {
-    greeting: String,
-    counter: usize,
+    ipfs_cid: String,
     encryption_pub_key: String,
 }
 
@@ -18,8 +17,7 @@ pub struct Contract {
 impl Default for Contract {
     fn default() -> Self {
         Self {
-            greeting: "Hello".to_string(),
-            counter: 0,
+            ipfs_cid: "".to_string(),
             encryption_pub_key: "".to_string(),
         }
     }
@@ -28,15 +26,13 @@ impl Default for Contract {
 // Implement the contract structure
 #[near_bindgen]
 impl Contract {
-    // Public method - returns the greeting saved, defaulting to DEFAULT_GREETING
-    pub fn get_greeting(&self) -> String {
-        return self.greeting.clone();
+    pub fn get_ipfs_cid(&self) -> &str {
+        &self.ipfs_cid
     }
 
-    // Public method - accepts a greeting, such as "howdy", and records it
-    pub fn set_greeting(&mut self, greeting: String) {
-        log_str(&format!("Saving greeting: {greeting}"));
-        self.greeting = greeting;
+    pub fn set_ipfs_cid(&mut self, ipfs_cid: String) {
+        log_str(&format!("Saving ipfs_cid: {ipfs_cid}"));
+        self.ipfs_cid = ipfs_cid;
     }
 
     pub fn get_encryption_pub_key(&self) -> String {
@@ -45,20 +41,6 @@ impl Contract {
 
     pub fn set_encryption_pub_key(&mut self, key: String) {
         self.encryption_pub_key = key;
-    }
-
-    pub fn get_counter(&self) -> usize {
-        self.counter
-    }
-
-    pub fn increment_counter(&mut self) {
-        log_str(&format!("Incrementing: {}", self.counter));
-        self.counter += 1;
-    }
-
-    pub fn multiply_counter(&mut self, val: usize) {
-        log_str(&format!("Multiplying: {} with {}", self.counter, val));
-        self.counter *= val;
     }
 }
 
@@ -71,17 +53,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn get_default_greeting() {
+    fn get_default_ipfs_cid() {
         let contract = Contract::default();
         // this test did not call set_greeting so should return the default "Hello" greeting
-        assert_eq!(contract.get_greeting(), "Hello".to_string());
+        assert_eq!(contract.get_ipfs_cid(), "".to_string());
     }
 
     #[test]
-    fn set_then_get_greeting() {
+    fn set_then_get_default_ipfs_cid() {
         let mut contract = Contract::default();
-        contract.set_greeting("howdy".to_string());
-        assert_eq!(contract.get_greeting(), "howdy".to_string());
+        contract.set_ipfs_cid("howdy".to_string());
+        assert_eq!(contract.get_ipfs_cid(), "howdy".to_string());
     }
 
     #[test]

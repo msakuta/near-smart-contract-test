@@ -6,6 +6,7 @@ use near_sdk::{env, near_bindgen};
 pub struct OldContract {
     greeting: String,
     counter: usize,
+    encryption_pub_key: String,
 }
 
 #[near_bindgen]
@@ -18,9 +19,8 @@ impl Contract {
 
         // return the new state
         Self {
-            greeting: old_state.greeting,
-            counter: old_state.counter,
-            encryption_pub_key: "".to_string(),
+            ipfs_cid: "".to_string(),
+            encryption_pub_key: old_state.encryption_pub_key,
         }
     }
 }
